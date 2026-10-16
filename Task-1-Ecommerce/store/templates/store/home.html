@@ -1,0 +1,233 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NOVA. | Modern Tech Store</title>
+
+    <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+
+        <a href="{% url 'home' %}" class="logo">
+            NOVA.
+        </a>
+
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="#products">Shop</a>
+            <a href="{% url 'cart' %}" class="cart-nav">
+    Cart
+
+    {% if cart_count > 0 %}
+        <span class="cart-count">{{ cart_count }}</span>
+    {% endif %}
+</a>
+            {% if user.is_authenticated %}
+
+    <div class="user-menu">
+        <span class="user-icon">●</span>
+        <span class="username">{{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+    </div>
+
+{% else %}
+
+    <a href="{% url 'login' %}">Login</a>
+    <a href="{% url 'register' %}" class="register-link">Sign Up</a>
+
+{% endif %}
+        </nav>
+
+    </header>
+    {% if messages %}
+
+    <div class="messages-container">
+
+        {% for message in messages %}
+
+            <div class="store-message {{ message.tags }}">
+                <span>{{ message }}</span>
+                <button
+                    type="button"
+                    class="message-close"
+                    onclick="this.parentElement.remove()"
+                >
+                    ×
+                </button>
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
+
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+
+        <p class="hero-small">
+            NEW COLLECTION
+        </p>
+
+        <h1>
+            Technology made simple.
+        </h1>
+
+        <p>
+            Discover modern products selected for your everyday life.
+        </p>
+
+        <a href="#products" class="shop-button">
+            Shop Now
+        </a>
+
+    </section>
+
+
+    <!-- PRODUCTS SECTION -->
+    <section class="products-section" id="products">
+
+        <div class="section-title">
+
+            <p>
+                OUR COLLECTION
+            </p>
+
+            <h2>
+                Featured Products
+            </h2>
+
+        </div>
+
+
+        <div class="product-grid">
+
+            {% for product in products %}
+
+<div class="product-card">
+
+    <!-- PRODUCT IMAGE -->
+    <div class="product-image">
+
+        <a href="{% url 'product_detail' product.id %}">
+
+            {% if product.image %}
+
+                <img
+                    src="{% static 'store/images/' %}{{ product.image }}"
+                    alt="{{ product.name }}"
+                >
+
+            {% else %}
+
+                <div class="product-placeholder">
+                    {{ product.name|slice:":1" }}
+                </div>
+
+            {% endif %}
+
+        </a>
+
+    </div>
+
+
+    <!-- PRODUCT INFORMATION -->
+    <div class="product-info">
+
+        <h3>
+            <a
+                href="{% url 'product_detail' product.id %}"
+                class="product-link"
+            >
+                {{ product.name }}
+            </a>
+        </h3>
+
+        <p class="description">
+            {{ product.description }}
+        </p>
+
+
+        <div class="product-bottom">
+
+            <span class="price">
+                ${{ product.price }}
+            </span>
+
+            {% if product.stock > 0 %}
+
+    <a
+        href="{% url 'add_to_cart' product.id %}"
+        class="add-cart-button"
+    >
+        Add to Cart
+    </a>
+
+{% else %}
+
+    <span class="add-cart-button disabled">
+        Sold Out
+    </span>
+
+{% endif %}
+
+        </div>
+
+
+        {% if product.stock > 0 %}
+
+    <p class="stock in-stock">
+        In stock · {{ product.stock }}
+    </p>
+
+{% else %}
+
+    <p class="stock out-of-stock">
+        Out of stock
+    </p>
+
+{% endif %}
+
+    </div>
+
+</div>
+
+{% empty %}
+
+<p>No products available.</p>
+
+{% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <h3>NOVA.</h3>
+
+<p>
+    Smart technology. Better everyday.
+</p>
+
+<p class="copyright">
+    © 2026 NOVA. All rights reserved.
+</p>
+
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,140 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Secure Checkout | NOVA.</title>
+
+    <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <a href="{% url 'home' %}" class="logo">
+    NOVA.
+</a>
+
+    <nav>
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'home' %}#products">Shop</a>
+        <a href="{% url 'cart' %}">Cart</a>
+
+        <div class="user-menu">
+            <span class="user-icon">●</span>
+            <span class="username">{{ user.username }}</span>
+        </div>
+    </nav>
+
+</header>
+
+
+<main class="checkout-page">
+
+    <div class="checkout-header">
+
+        <p>SECURE CHECKOUT</p>
+
+        <h1>Complete your order.</h1>
+
+        <span>
+            Review your items before placing your order.
+        </span>
+
+    </div>
+
+
+    <div class="checkout-layout">
+
+        <section class="checkout-customer">
+
+            <h2>Customer Information</h2>
+
+            <div class="customer-info">
+
+                <div>
+                    <span>Username</span>
+                    <strong>{{ user.username }}</strong>
+                </div>
+
+                <div>
+                    <span>Email</span>
+                    <strong>{{ user.email }}</strong>
+                </div>
+
+            </div>
+
+            <div class="checkout-note">
+                <strong>Secure checkout</strong>
+                <p>
+                    Your order will be linked securely to your Nova Store account.
+                </p>
+            </div>
+
+        </section>
+
+
+        <section class="order-summary">
+
+            <h2>Order Summary</h2>
+
+            {% for item in cart_items %}
+
+                <div class="summary-item">
+
+                    <div>
+                        <strong>{{ item.product.name }}</strong>
+
+                        <p>
+                            ${{ item.product.price }} × {{ item.quantity }}
+                        </p>
+                    </div>
+
+                    <span>
+                        ${{ item.subtotal }}
+                    </span>
+
+                </div>
+
+            {% endfor %}
+
+
+            <div class="summary-total">
+
+                <span>Total</span>
+
+                <strong>
+                    ${{ total }}
+                </strong>
+
+            </div>
+
+
+            <form method="POST" action="{% url 'place_order' %}">
+
+                {% csrf_token %}
+
+                <button type="submit" class="place-order-button">
+                    Place Order
+                </button>
+
+            </form>
+
+
+            <a href="{% url 'cart' %}" class="return-cart">
+                ← Return to cart
+            </a>
+
+        </section>
+
+    </div>
+
+</main>
+
+</body>
+</html>
