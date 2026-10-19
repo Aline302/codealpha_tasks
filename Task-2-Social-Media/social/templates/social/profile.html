@@ -1,0 +1,192 @@
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | BLOOM.</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'social/style.css' %}">
+</head>
+
+<body class="profile-page bloom-profile-v2">
+
+    <header class="profile-topbar">
+        <a href="{% url 'home' %}" class="profile-brand">
+            <span class="profile-brand-icon">✳</span>
+            bloom<span>.</span>
+        </a>
+
+        <a href="{% url 'home' %}" class="profile-back">
+            ← Back to feed
+        </a>
+    </header>
+
+    <main class="profile-container">
+
+        <div class="profile-intro">
+            <span class="eyebrow">YOUR PERSONAL SPACE</span>
+            <h1>A little more about <em>you.</em></h1>
+            <p>Your story, your moments, your little corner of BLOOM.</p>
+        </div>
+
+        <section class="profile-card">
+
+            <div class="profile-cover">
+                <div class="cover-decoration cover-decoration-one">✳</div>
+                <div class="cover-decoration cover-decoration-two">✦</div>
+                <span class="cover-caption">KEEP GROWING · KEEP BLOOMING</span>
+            </div>
+
+            <div class="profile-info">
+
+                <div class="profile-avatar">
+                    {% if profile.profile_picture %}
+                        <img
+                            src="{{ profile.profile_picture.url }}"
+                            alt="{{ user.username }}'s profile picture">
+                    {% else %}
+                        {{ user.username|first|upper }}
+                    {% endif %}
+                </div>
+
+                <div class="profile-identity">
+                    <span class="profile-member-label">
+                        ✳ BLOOM MEMBER
+                    </span>
+
+                    <h2>{{ user.username }}</h2>
+                    <p class="profile-handle">@{{ user.username }}</p>
+                </div>
+
+                <p class="profile-bio">
+                    {% if profile.bio %}
+                        {{ profile.bio|linebreaksbr }}
+                    {% else %}
+                        A little flower growing on BLOOM. ✳
+                    {% endif %}
+                </p>
+
+                <a href="{% url 'edit_profile' %}" class="edit-profile-link">
+                    ✎ Edit profile
+                </a>
+
+                <div class="profile-stats">
+                    <div>
+                        <strong>{{ posts_count }}</strong>
+                        <span>Posts</span>
+                    </div>
+
+                    <div>
+                        <strong>{{ followers_count }}</strong>
+                        <span>Followers</span>
+                    </div>
+
+                    <div>
+                        <strong>{{ following_count }}</strong>
+                        <span>Following</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="profile-posts">
+
+            <div class="profile-posts-heading">
+                <div>
+                    <span class="eyebrow">YOUR COLLECTION</span>
+                    <h2>Little moments <span>✳</span></h2>
+                    <p class="profile-subtitle">
+                        Every story you've shared, all in one place.
+                    </p>
+                </div>
+
+                <a href="{% url 'home' %}" class="profile-new-post">
+                    + New post
+                </a>
+            </div>
+
+            {% for post in posts %}
+
+                <article class="profile-post-card">
+
+                    <div class="profile-post-header">
+
+                        <div class="profile-post-avatar">
+                            {% if profile.profile_picture %}
+                                <img
+                                    src="{{ profile.profile_picture.url }}"
+                                    alt="{{ user.username }}'s profile picture">
+                            {% else %}
+                                {{ user.username|first|upper }}
+                            {% endif %}
+                        </div>
+
+                        <div class="profile-post-author">
+                            <strong>{{ user.username }}</strong>
+                            <p>
+                                @{{ user.username }} ·
+                                {{ post.created_at|date:"M d, Y" }}
+                            </p>
+                        </div>
+
+                        <span class="profile-post-sparkle">✳</span>
+                    </div>
+
+                    {% if post.content %}
+                        <div class="profile-post-content">
+                            {{ post.content|linebreaksbr }}
+                        </div>
+                    {% endif %}
+
+                    {% if post.image %}
+                        <img
+                            class="profile-post-image"
+                            src="{{ post.image.url }}"
+                            alt="Image shared by {{ user.username }}"
+                            loading="lazy">
+                    {% endif %}
+
+                    <div class="profile-post-footer">
+                        <span>♡ {{ post.likes.count }} Likes</span>
+                        <span>♧ {{ post.comments.count }} Comments</span>
+                        <span class="profile-post-date">
+                            Shared on BLOOM ✳
+                        </span>
+                    </div>
+
+                </article>
+
+            {% empty %}
+
+                <div class="profile-empty">
+                    <span>✳</span>
+                    <h3>Your story starts here.</h3>
+                    <p>
+                        Every beautiful connection begins with
+                        a little moment worth sharing.
+                    </p>
+
+                    <a href="{% url 'home' %}">
+                        Create your first post ↗
+                    </a>
+                </div>
+
+            {% endfor %}
+
+        </section>
+
+        <footer class="profile-footer">
+            Made to connect. Made to grow. Made for you. ✳
+        </footer>
+
+    </main>
+
+</body>
+</html>

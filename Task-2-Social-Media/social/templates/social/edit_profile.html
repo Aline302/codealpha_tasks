@@ -1,0 +1,104 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | BLOOM.</title>
+
+    <link rel="stylesheet" href="{% static 'social/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="edit-profile-page">
+
+    <header class="profile-topbar">
+        <a href="{% url 'home' %}" class="profile-brand">
+            🌸 BLOOM.
+        </a>
+
+        <a href="{% url 'my_profile' %}" class="profile-back">
+            ← Back to My Profile
+        </a>
+    </header>
+
+    <main class="edit-profile-container">
+
+        <div class="edit-profile-card">
+
+            <div class="edit-profile-icon">🌷</div>
+
+            <h1>Make it yours.</h1>
+
+            <p class="edit-profile-subtitle">
+                Your little corner of BLOOM deserves to feel like you.
+            </p>
+
+            <div class="edit-avatar-preview">
+                {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture.url }}"
+                         alt="Current profile picture">
+                {% else %}
+                    {{ user.username|first|upper }}
+                {% endif %}
+            </div>
+
+            <p class="edit-profile-username">
+                @{{ user.username }}
+            </p>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="edit-form-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="edit-form-group">
+                    <label for="{{ form.bio.id_for_label }}">
+                        ✿ Your Bio
+                    </label>
+
+                    {{ form.bio }}
+                    {{ form.bio.errors }}
+
+                    <small>
+                        Tell the BLOOM community a little about yourself.
+                    </small>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="{{ form.profile_picture.id_for_label }}">
+                        📸 Profile Picture
+                    </label>
+
+                    {{ form.profile_picture }}
+                    {{ form.profile_picture.errors }}
+
+                    <small>
+                        Choose a photo that makes you smile.
+                    </small>
+                </div>
+
+                <div class="edit-profile-actions">
+                    <a href="{% url 'my_profile' %}"
+                       class="edit-cancel-btn">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="edit-save-btn">
+                        Save Changes 🌸
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

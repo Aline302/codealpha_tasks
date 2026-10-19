@@ -1,0 +1,179 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore | BLOOM.</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'social/style.css' %}">
+</head>
+
+<body class="explore-page bloom-explore-v2">
+
+    <header class="profile-topbar">
+        <a href="{% url 'home' %}" class="profile-brand">
+            <span class="profile-brand-icon">✳</span>
+            bloom<span>.</span>
+        </a>
+
+        <a href="{% url 'home' %}" class="profile-back">
+            ← Back to feed
+        </a>
+    </header>
+
+    <main class="explore-container">
+
+        <section class="explore-hero">
+            <div class="explore-hero-decoration" aria-hidden="true">✳</div>
+
+            <span class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                DISCOVER YOUR COMMUNITY
+            </span>
+
+            <h1>
+                Find your <em>people.</em>
+            </h1>
+
+            <p>
+                Great conversations begin with a simple hello.
+                Discover new faces, share ideas, and grow together.
+            </p>
+
+            <form method="get"
+                  action="{% url 'explore' %}"
+                  class="explore-search">
+
+                <span class="explore-search-icon" aria-hidden="true">⌕</span>
+
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ query|default_if_none:'' }}"
+                    placeholder="Search by name or username..."
+                    aria-label="Search community members">
+
+                <button type="submit">
+                    Search ↗
+                </button>
+            </form>
+
+            <div class="explore-hero-note">
+                ✦ Every connection has a story.
+            </div>
+        </section>
+
+        <section class="explore-members">
+
+            <div class="explore-members-header">
+                <div>
+                    <span class="eyebrow">THE BLOOM COMMUNITY</span>
+
+                    <h2 class="explore-section-title">
+                        {% if query %}
+                            Search results <span>✳</span>
+                        {% else %}
+                            Meet the community <span>✳</span>
+                        {% endif %}
+                    </h2>
+
+                    <p class="explore-members-subtitle">
+                        {% if query %}
+                            Showing members matching "{{ query }}"
+                        {% else %}
+                            Discover the people who make BLOOM special.
+                        {% endif %}
+                    </p>
+                </div>
+
+                {% if query %}
+                    <a href="{% url 'explore' %}" class="explore-clear">
+                        Clear search ×
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="explore-grid">
+
+                {% for member in users %}
+
+                    <article class="explore-user-card">
+
+                        <div class="explore-card-cover">
+                            <span aria-hidden="true">✳</span>
+                        </div>
+
+                        <div class="explore-user-avatar">
+                            {% if member.profile.profile_picture %}
+                                <img
+                                    src="{{ member.profile.profile_picture.url }}"
+                                    alt="{{ member.username }}'s profile picture"
+                                    loading="lazy">
+                            {% else %}
+                                {{ member.username|first|upper }}
+                            {% endif %}
+                        </div>
+
+                        <div class="explore-user-details">
+                            <span class="explore-member-tag">
+                                ✳ BLOOM MEMBER
+                            </span>
+
+                            <h3>{{ member.username }}</h3>
+                            <p class="explore-username">
+                                @{{ member.username }}
+                            </p>
+
+                            <div class="explore-user-bio">
+                                {% if member.profile.bio %}
+                                    {{ member.profile.bio|truncatechars:100 }}
+                                {% else %}
+                                    A new story is blooming here. ✳
+                                {% endif %}
+                            </div>
+
+                            <a
+                                href="{% url 'user_profile' member.username %}"
+                                class="explore-view-btn">
+                                View profile ↗
+                            </a>
+                        </div>
+
+                    </article>
+
+                {% empty %}
+
+                    <div class="explore-empty">
+                        <span>✳</span>
+
+                        <h3>No members found.</h3>
+
+                        <p>
+                            We couldn't find anyone matching your search.
+                            Try another name or explore the community.
+                        </p>
+
+                        <a href="{% url 'explore' %}">
+                            View all members ↗
+                        </a>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        <footer class="explore-footer">
+            A little space for big connections. ✳
+        </footer>
+
+    </main>
+
+</body>
+</html>

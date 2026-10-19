@@ -1,0 +1,377 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f7fc">
+  <title>BLOOM. | Connect. Share. Grow.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'social/style.css' %}">
+</head>
+<body class="bloom-v2">
+
+<header class="topbar">
+  <a href="{% url 'home' %}" class="logo" aria-label="BLOOM home">
+    <span class="brand-mark">✳</span> bloom<span>.</span>
+  </a>
+
+  <div class="topbar-center">
+    A little space for big connections <span>✦</span>
+  </div>
+
+  <div class="topbar-right">
+    {% if user.is_authenticated %}
+      <span class="welcome-user">
+        Hi, <strong>{{ user.username }}</strong>
+      </span>
+
+      <a href="{% url 'my_profile' %}" class="top-avatar" aria-label="My profile">
+        {% if user.profile.profile_picture %}
+          <img src="{{ user.profile.profile_picture.url }}" alt="" class="avatar-image">
+        {% else %}
+          {{ user.username|first|upper }}
+        {% endif %}
+      </a>
+
+      <form method="post" action="{% url 'logout' %}" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn">Log out</button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}" class="login-nav">Log in</a>
+      <a href="{% url 'register' %}" class="signup-nav">Join BLOOM ↗</a>
+    {% endif %}
+  </div>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="sidebar-label">YOUR SPACE</div>
+
+    <nav class="navigation">
+      <a href="{% url 'home' %}" class="nav-link active" aria-current="page">
+        <span class="nav-icon">⌂</span>
+        <span>Home</span>
+      </a>
+
+      <a href="{% url 'explore' %}" class="nav-link">
+        <span class="nav-icon">⌕</span>
+        <span>Explore</span>
+      </a>
+
+      {% if user.is_authenticated %}
+        <a href="{% url 'my_profile' %}" class="nav-link">
+          <span class="nav-icon">◉</span>
+          <span>My profile</span>
+        </a>
+      {% else %}
+        <a href="{% url 'login' %}" class="nav-link">
+          <span class="nav-icon">◉</span>
+          <span>My profile</span>
+        </a>
+      {% endif %}
+    </nav>
+
+    <div class="sidebar-bottom">
+      <span class="flower">✳</span>
+      <h3>Good things grow.</h3>
+      <p>Show up as yourself. The rest will bloom.</p>
+      <a href="{% url 'explore' %}">Find your people ↗</a>
+    </div>
+
+    <p class="sidebar-footnote">© BLOOM. · Made to connect</p>
+  </aside>
+
+  <main class="feed" id="main-content">
+
+    <section class="welcome">
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        YOUR CORNER OF THE INTERNET
+      </div>
+
+      <h1>
+        Make room for <em>good things.</em>
+        <span>✳</span>
+      </h1>
+
+      <p>
+        A little update, a big feeling, a moment worth sharing.
+        You're welcome here.
+      </p>
+    </section>
+
+    <section class="composer card" aria-label="Create a post">
+      {% if user.is_authenticated %}
+
+        <form method="post"
+              action="{% url 'create_post' %}"
+              enctype="multipart/form-data">
+
+          {% csrf_token %}
+
+          <div class="composer-top">
+            <a href="{% url 'my_profile' %}" class="avatar" aria-label="My profile">
+              {% if user.profile.profile_picture %}
+                <img src="{{ user.profile.profile_picture.url }}"
+                     alt=""
+                     class="avatar-image">
+              {% else %}
+                {{ user.username|first|upper }}
+              {% endif %}
+            </a>
+
+            <div class="composer-input-wrap">
+              <div class="composer-greeting">
+                Share a little moment, @{{ user.username }}
+              </div>
+              {{ form.content }}
+            </div>
+          </div>
+
+          {% if form.content.errors %}
+            <div class="form-errors">{{ form.content.errors }}</div>
+          {% endif %}
+
+          <div class="composer-footer">
+            <label class="upload-label">
+              <span>▧</span> Add a photo
+              {{ form.image }}
+            </label>
+
+            <button type="submit" class="primary-btn">
+              Publish post ↗
+            </button>
+          </div>
+
+          {% if form.image.errors %}
+            <div class="form-errors">{{ form.image.errors }}</div>
+          {% endif %}
+        </form>
+
+      {% else %}
+        <div class="composer-top">
+          <div class="avatar">✳</div>
+          <div>
+            <strong>Have something to share?</strong>
+            <p>Join the community and let your voice bloom.</p>
+          </div>
+        </div>
+
+        <a href="{% url 'login' %}" class="primary-btn login-link">
+          Log in to post ↗
+        </a>
+      {% endif %}
+    </section>
+
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">THE CONVERSATION</span>
+        <h2>Latest moments</h2>
+      </div>
+      <span class="feed-sort">Newest first ↓</span>
+    </div>
+
+    {% for post in posts %}
+      <article class="post card">
+
+        <div class="post-header">
+          <a href="{% url 'user_profile' post.author.username %}"
+             class="avatar"
+             aria-label="View {{ post.author.username }}'s profile">
+
+            {% if post.author.profile.profile_picture %}
+              <img src="{{ post.author.profile.profile_picture.url }}"
+                   alt=""
+                   class="avatar-image">
+            {% else %}
+              {{ post.author.username|first|upper }}
+            {% endif %}
+          </a>
+
+          <div class="post-author-details">
+            <h3>
+              <a href="{% url 'user_profile' post.author.username %}"
+                 class="post-author-link">
+                {{ post.author.username }}
+              </a>
+              <span class="author-sparkle">✳</span>
+            </h3>
+
+            <span class="post-date">
+              @{{ post.author.username }} ·
+              {{ post.created_at|date:"M d, Y" }}
+            </span>
+          </div>
+
+          <span class="post-more" aria-hidden="true">···</span>
+        </div>
+
+        {% if post.content %}
+          <div class="post-content">
+            {{ post.content|linebreaksbr }}
+          </div>
+        {% endif %}
+
+        {% if post.image %}
+          <img class="post-image"
+               src="{{ post.image.url }}"
+               alt="Image shared by {{ post.author.username }}"
+               loading="lazy">
+        {% endif %}
+
+        <div class="post-actions">
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'like_post' post.id %}">
+              {% csrf_token %}
+              <button type="submit" class="like-btn">
+                ♡ {{ post.likes.count }} Likes
+              </button>
+            </form>
+          {% else %}
+            <span class="action-count">
+              ♡ {{ post.likes.count }} Likes
+            </span>
+          {% endif %}
+
+          <span class="action-count">
+            ♧ {{ post.comments.count }} Comments
+          </span>
+        </div>
+
+        <section class="comments-section" aria-label="Comments">
+          <h4>
+            Conversation <span>{{ post.comments.count }}</span>
+          </h4>
+
+          {% for comment in post.comments.all %}
+            <div class="comment">
+
+              <a href="{% url 'user_profile' comment.author.username %}"
+                 class="comment-avatar"
+                 aria-label="View {{ comment.author.username }}'s profile">
+
+                {% if comment.author.profile.profile_picture %}
+                  <img src="{{ comment.author.profile.profile_picture.url }}"
+                       alt=""
+                       class="avatar-image">
+                {% else %}
+                  {{ comment.author.username|first|upper }}
+                {% endif %}
+              </a>
+
+              <div class="comment-body">
+                <strong>
+                  <a href="{% url 'user_profile' comment.author.username %}"
+                     class="post-author-link">
+                    {{ comment.author.username }}
+                  </a>
+                </strong>
+
+                <small>{{ comment.created_at|date:"M d, Y" }}</small>
+                <p>{{ comment.content }}</p>
+              </div>
+            </div>
+
+          {% empty %}
+            <p class="no-comments">
+              No comments yet. Start the conversation ✳
+            </p>
+          {% endfor %}
+
+          {% if user.is_authenticated %}
+            <form method="post"
+                  action="{% url 'add_comment' post.id %}"
+                  class="comment-form">
+
+              {% csrf_token %}
+
+              <label class="sr-only" for="comment-{{ post.id }}">
+                Write a comment
+              </label>
+
+              <input id="comment-{{ post.id }}"
+                     type="text"
+                     name="content"
+                     class="comment-input"
+                     placeholder="Write a thoughtful comment..."
+                     maxlength="500"
+                     required>
+
+              <button type="submit" class="comment-btn">
+                Post ↗
+              </button>
+            </form>
+          {% else %}
+            <p class="no-comments">
+              <a href="{% url 'login' %}">Log in</a>
+              to join the conversation.
+            </p>
+          {% endif %}
+        </section>
+      </article>
+
+    {% empty %}
+      <div class="empty-state card">
+        <div class="empty-flower">✳</div>
+        <h3>Every story starts somewhere.</h3>
+        <p>
+          No posts yet. Be the first to share a little moment with BLOOM.
+        </p>
+        <a href="{% url 'explore' %}">
+          Explore the community ↗
+        </a>
+      </div>
+    {% endfor %}
+
+  </main>
+
+  <aside class="rightbar" aria-label="Community highlights">
+
+    <div class="quote-card">
+      <div class="quote-decor">✳</div>
+      <span>YOUR DAILY REMINDER</span>
+      <h3>Grow at your <em>own pace.</em></h3>
+      <p>
+        You don't have to have it all figured out.
+        Just keep showing up.
+      </p>
+      <div class="quote-footer">
+        A LITTLE LOVE FROM BLOOM. ♡
+      </div>
+    </div>
+
+    <div class="community card">
+      <div class="community-top">
+        <span class="community-icon">✦</span>
+        <span>OUR COMMUNITY</span>
+      </div>
+
+      <h3>Find your kind of people.</h3>
+      <p>
+        New conversations, fresh perspectives,
+        meaningful connections.
+      </p>
+
+      <div class="community-tags">
+        <span>#creativity</span>
+        <span>#everydayjoy</span>
+        <span>#bloom</span>
+      </div>
+
+      <a href="{% url 'explore' %}" class="community-link">
+        Explore members ↗
+      </a>
+    </div>
+
+  </aside>
+</div>
+
+</body>
+</html>
+

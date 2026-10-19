@@ -1,0 +1,133 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join BLOOM. | Create Account</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'social/style.css' %}">
+</head>
+
+<body class="auth-page bloom-auth-v2">
+
+    <main class="auth-layout">
+
+        <section class="auth-showcase">
+            <a href="{% url 'home' %}" class="auth-brand">
+                <span class="auth-brand-icon">✳</span>
+                bloom<span>.</span>
+            </a>
+
+            <div class="auth-showcase-content">
+                <span class="auth-showcase-label">
+                    ✦ YOUR STORY STARTS HERE
+                </span>
+
+                <h1>
+                    A little hello.<br>
+                    <em>A lot of possibility.</em>
+                </h1>
+
+                <p>
+                    Discover new perspectives, share what matters
+                    and find a community where you can
+                    truly be yourself.
+                </p>
+
+                <div class="auth-showcase-decoration"
+                     aria-hidden="true">✳</div>
+            </div>
+
+            <div class="auth-showcase-footer">
+                CONNECT · SHARE · GROW
+            </div>
+        </section>
+
+        <section class="auth-form-panel">
+
+            <div class="auth-form-container">
+
+                <a href="{% url 'home' %}" class="auth-mobile-brand">
+                    ✳ bloom<span>.</span>
+                </a>
+
+                <div class="auth-heading">
+                    <span class="auth-eyebrow">
+                        JOIN THE COMMUNITY ✳
+                    </span>
+
+                    <h2>Your story <em>starts here.</em></h2>
+
+                    <p>
+                        Create your account and start
+                        blooming with us.
+                    </p>
+                </div>
+
+                <form method="post" class="auth-modern-form">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="login-error" role="alert">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        <div class="auth-field">
+
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <div class="auth-help">
+                                    {{ field.help_text }}
+                                </div>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <small class="auth-error">
+                                    {{ error }}
+                                </small>
+                            {% endfor %}
+
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit"
+                            class="primary-btn auth-submit">
+                        Create my account ↗
+                    </button>
+                </form>
+
+                <div class="auth-divider">
+                    <span>ALREADY A MEMBER?</span>
+                </div>
+
+                <p class="auth-footer">
+                    Already part of BLOOM?
+                    <a href="{% url 'login' %}">
+                        Log in ↗
+                    </a>
+                </p>
+
+                <a href="{% url 'home' %}" class="auth-back-link">
+                    ← Back to home
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

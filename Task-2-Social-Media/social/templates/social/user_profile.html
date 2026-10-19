@@ -1,0 +1,239 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile_user.username }} | BLOOM.</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'social/style.css' %}">
+</head>
+
+<body class="profile-page bloom-profile-v2 bloom-public-v2">
+
+    <header class="profile-topbar">
+        <a href="{% url 'home' %}" class="profile-brand">
+            <span class="profile-brand-icon">✳</span>
+            bloom<span>.</span>
+        </a>
+
+        <a href="{% url 'explore' %}" class="profile-back">
+            ← Back to explore
+        </a>
+    </header>
+
+    <main class="profile-container">
+
+        <div class="profile-intro">
+            <span class="eyebrow">THE BLOOM COMMUNITY</span>
+            <h1>Meet <em>{{ profile_user.username }}.</em></h1>
+            <p>Every connection begins with a story.</p>
+        </div>
+
+        <section class="profile-card">
+
+            <div class="profile-cover">
+                <div class="cover-decoration cover-decoration-one"
+                     aria-hidden="true">✳</div>
+
+                <div class="cover-decoration cover-decoration-two"
+                     aria-hidden="true">✦</div>
+
+                <span class="cover-caption">
+                    CONNECT · SHARE · GROW
+                </span>
+            </div>
+
+            <div class="profile-info">
+
+                <div class="profile-avatar">
+                    {% if profile.profile_picture %}
+                        <img
+                            src="{{ profile.profile_picture.url }}"
+                            alt="{{ profile_user.username }}'s profile picture">
+                    {% else %}
+                        {{ profile_user.username|first|upper }}
+                    {% endif %}
+                </div>
+
+                <div class="profile-identity">
+                    <span class="profile-member-label">
+                        ✳ BLOOM MEMBER
+                    </span>
+
+                    <h2>{{ profile_user.username }}</h2>
+
+                    <p class="profile-handle">
+                        @{{ profile_user.username }}
+                    </p>
+                </div>
+
+                <p class="profile-bio">
+                    {% if profile.bio %}
+                        {{ profile.bio|linebreaksbr }}
+                    {% else %}
+                        A new story is blooming here. ✳
+                    {% endif %}
+                </p>
+
+                <div class="public-follow-area">
+
+                    {% if user.is_authenticated %}
+
+                        <form method="post"
+                              action="{% url 'toggle_follow' profile_user.username %}">
+                            {% csrf_token %}
+
+                            {% if is_following %}
+                                <button type="submit" class="unfollow-btn">
+                                    ✓ Following
+                                </button>
+                            {% else %}
+                                <button type="submit" class="follow-btn">
+                                    + Follow
+                                </button>
+                            {% endif %}
+
+                        </form>
+
+                    {% else %}
+
+                        <a href="{% url 'login' %}" class="follow-btn">
+                            Log in to follow ↗
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="profile-stats">
+
+                    <div>
+                        <strong>{{ posts_count }}</strong>
+                        <span>Posts</span>
+                    </div>
+
+                    <div>
+                        <strong>{{ followers_count }}</strong>
+                        <span>Followers</span>
+                    </div>
+
+                    <div>
+                        <strong>{{ following_count }}</strong>
+                        <span>Following</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="profile-posts">
+
+            <div class="profile-posts-heading">
+                <div>
+                    <span class="eyebrow">SHARED MOMENTS</span>
+
+                    <h2>
+                        Little moments <span>✳</span>
+                    </h2>
+
+                    <p class="profile-subtitle">
+                        Discover what {{ profile_user.username }}
+                        has been sharing.
+                    </p>
+                </div>
+
+                <a href="{% url 'explore' %}" class="profile-new-post">
+                    Explore more ↗
+                </a>
+            </div>
+
+            {% for post in posts %}
+
+                <article class="profile-post-card">
+
+                    <div class="profile-post-header">
+
+                        <div class="profile-post-avatar">
+                            {% if profile.profile_picture %}
+                                <img
+                                    src="{{ profile.profile_picture.url }}"
+                                    alt="{{ profile_user.username }}'s picture">
+                            {% else %}
+                                {{ profile_user.username|first|upper }}
+                            {% endif %}
+                        </div>
+
+                        <div class="profile-post-author">
+                            <strong>{{ profile_user.username }}</strong>
+
+                            <p>
+                                @{{ profile_user.username }} ·
+                                {{ post.created_at|date:"M d, Y" }}
+                            </p>
+                        </div>
+
+                        <span class="profile-post-sparkle"
+                              aria-hidden="true">✳</span>
+
+                    </div>
+
+                    {% if post.content %}
+                        <div class="profile-post-content">
+                            {{ post.content|linebreaksbr }}
+                        </div>
+                    {% endif %}
+
+                    {% if post.image %}
+                        <img
+                            class="profile-post-image"
+                            src="{{ post.image.url }}"
+                            alt="Image shared by {{ profile_user.username }}"
+                            loading="lazy">
+                    {% endif %}
+
+                    <div class="profile-post-footer">
+                        <span>♡ {{ post.likes.count }} Likes</span>
+                        <span>♧ {{ post.comments.count }} Comments</span>
+                        <span class="profile-post-date">
+                            Shared on BLOOM ✳
+                        </span>
+                    </div>
+
+                </article>
+
+            {% empty %}
+
+                <div class="profile-empty">
+                    <span>✳</span>
+
+                    <h3>No little moments yet.</h3>
+
+                    <p>
+                        {{ profile_user.username }} hasn't shared
+                        a post yet. This story is just beginning!
+                    </p>
+
+                    <a href="{% url 'explore' %}">
+                        Discover more members ↗
+                    </a>
+                </div>
+
+            {% endfor %}
+
+        </section>
+
+        <footer class="profile-footer">
+            A little space for big connections. ✳
+        </footer>
+
+    </main>
+
+</body>
+</html>
